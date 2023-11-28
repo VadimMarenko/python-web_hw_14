@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="/static/css/style.css" />
+    <title>{{title}}</title>
+  </head>
+  <body class="text-center">
+    <main class="form-signin w-100 m-auto">
+      <img
+        class="mb-4"
+        src="/static/images/logo.jpg"
+        alt=""
+        width="300"
+        height="300"
+      />
+      <h1 class="h3 mb-3 fw-normal">Please sign up</h1>
+      <form>
+        <div class="form-floating">
+          <input
+            type="text"
+            class="form-control"
+            id="first_name"
+            placeholder="first_name"
+            autocomplete="given-name"
+            name="first_name"
+            required
+          />
+          <label for="first_name">First Name</label>
+        </div>
+        <div class="form-floating">
+          <input
+            type="text"
+            class="form-control"
+            id="last_name"
+            placeholder="last_name"
+            autocomplete="family-name"
+            name="last_name"
+            required
+          />
+          <label for="last_name">Last Name</label>
+        </div>
+        <div class="form-floating">
+          <input
+            type="text"
+            class="form-control"
+            id="username"
+            placeholder="username"
+            name="username"
+            required
+          />
+          <label for="username">Username</label>
+        </div>
+        <div class="form-floating">
+          <input
+            type="email"
+            class="form-control"
+            id="email"
+            placeholder="name@example.com"
+            name="email"
+            required
+          />
+          <label for="email">Email address</label>
+        </div>
+        <div class="form-floating">
+          <input
+            type="password"
+            class="form-control"
+            id="password"
+            placeholder="Password"
+            name="password"
+            required
+          />
+          <label for="password">Password</label>
+        </div>
+        <div class="form-floating">
+          <input
+            type="date"
+            class="form-control"
+            id="born_date"
+            placeholder="born_date"
+            name="born_date"
+          />
+          <label for="born_date">Born date</label>
+        </div>
+        <div class="form-floating">
+          <input
+            type="text"
+            class="form-control"
+            id="description"
+            placeholder="description"
+            name="description"
+          />
+          <label for="description">Description</label>
+        </div>
+        <button
+          class="w-100 btn btn-lg btn-primary"
+          onclick="submitForm()"
+          type="submit"
+        >
+          Sign up
+        </button>
+        <p class="mt-5 mb-3 text-muted">&copy; 2023</p>
+      </form>
+      <script src="/static/javascript/register.js"></script>
+    </main>
+  </body>
+</html>
