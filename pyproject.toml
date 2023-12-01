@@ -25,6 +25,7 @@ pydantic-settings = "^2.1.0"
 fastapi-limiter = "^0.1.5"
 cloudinary = "^1.36.0"
 pydantic = {extras = ["email"], version = "^2.5.2"}
+pytest = "^7.4.3"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -33,3 +34,6 @@ sphinx = "^7.2.6"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
