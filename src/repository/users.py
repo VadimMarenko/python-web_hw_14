@@ -125,39 +125,42 @@ async def remove_user(user_id: int, db: Session):
     return user
 
 
-async def search_user(db: Session, q: str, skip: int, limit: int):
+async def search_user(q: str, skip: int, limit: int, db: Session):
     """
     The search_user function searches for users in the database.
 
-    :param db: Session: Pass the database session to the function
     :param q: str: Search for a user by first name, last name or email
     :param skip: int: Skip the first n results
     :param limit: int: Limit the number of results returned
+    :param db: Session: Pass the database session to the function
     :return: A list of users
     :doc-author: Trelent
     """
-    query = db.query(Users)
-    if q:
-        query = query.filter(
+    users = (
+        db.query(Users)
+        .query.filter(
             or_(
                 Users.first_name.ilike(f"%{q}%"),
                 Users.last_name.ilike(f"%{q}%"),
                 Users.email.ilike(f"%{q}%"),
             )
         )
-    users = query.offset(skip).limit(limit)
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
     return users
 
 
-async def birthdays_per_week(db: Session, days: int, skip: int, limit: int):
+async def birthdays_per_week(days: int, skip: int, limit: int, db: Session):
     """
     The birthdays_per_week function returns a list of users whose birthdays are within the next
         'days' days. The function takes three arguments:
 
-    :param db: Session: Pass the database session to the function
     :param days: int: Determine how many days in the future to look for birthdays
     :param skip: int: Skip the first n records
     :param limit: int: Limit the number of users returned
+    :param db: Session: Pass the database session to the function
     :return: A list of users whose birthday is within the next n days
     :doc-author: Trelent
     """
