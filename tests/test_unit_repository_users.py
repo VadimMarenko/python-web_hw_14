@@ -30,7 +30,7 @@ from src.repository.users import (
 )
 
 
-class TestUsers(unittest.IsolatedAsyncioTestCase):
+class TestUsersRepository(unittest.IsolatedAsyncioTestCase):
     def setUp(self):
         self.session = MagicMock(spec=Session)
         self.user = Users(id=1)
@@ -43,7 +43,7 @@ class TestUsers(unittest.IsolatedAsyncioTestCase):
 
     async def test_get_user_found(self):
         user = Users(id=1)
-        self.session.query().filter_by(id=user.id).first.return_value = user
+        self.session.query().filter_by().first.return_value = user
         result = await get_user(user_id=1, db=self.session)
         self.assertEqual(result, user)
 
@@ -53,7 +53,6 @@ class TestUsers(unittest.IsolatedAsyncioTestCase):
         self.assertIsNone(result)
 
     async def test_create_user(self):
-        user = Users()
         body = UserModel(
             first_name="Bill",
             last_name="Johnson",
@@ -64,7 +63,6 @@ class TestUsers(unittest.IsolatedAsyncioTestCase):
             born_date="2000-05-05",
             description="test",
         )
-        self.session.query().filter().first.return_value = user
         result = await create_user(body=body, db=self.session)
         self.assertEqual(result.first_name, body.first_name)
         self.assertEqual(result.last_name, body.last_name)
@@ -98,7 +96,7 @@ class TestUsers(unittest.IsolatedAsyncioTestCase):
             born_date="2000-05-05",
             description="test",
         )
-        self.session.query(Users).filter_by(id=user.id).first.return_value = user
+        self.session.query().filter_by().first.return_value = user
         result = await update_user(body=body, user_id=user.id, db=self.session)
         self.assertEqual(result.first_name, body.first_name)
         self.assertEqual(result.last_name, body.last_name)
