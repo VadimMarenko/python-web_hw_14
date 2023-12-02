@@ -38,7 +38,7 @@ security = HTTPBearer()
     "/signup",
     response_model=UserResponse,
     status_code=status.HTTP_201_CREATED,
-    dependencies=[Depends(RateLimiter(times=2, seconds=10))],
+    # dependencies=[Depends(RateLimiter(times=2, seconds=10))],
 )
 async def signup(
     body: UserModel,
