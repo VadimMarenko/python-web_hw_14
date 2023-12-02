@@ -1,14 +1,16 @@
-from ipaddress import ip_address
-from typing import Callable
+# from ipaddress import ip_address
+# from typing import Callable
+from pathlib import Path
 import time
 
 from fastapi import FastAPI, Depends, HTTPException, status, Request
+
 from fastapi_limiter import FastAPILimiter
 from fastapi_limiter.depends import RateLimiter
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from redis.asyncio import Redis
+import redis.asyncio as redis
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 from starlette.middleware.cors import CORSMiddleware
@@ -16,32 +18,13 @@ from starlette.middleware.cors import CORSMiddleware
 
 from src.database.db import get_db
 from src.routes import users, auth
-from src.repository.users import get_user_by_email
 from src.conf.config import settings
 
 app = FastAPI()
 
-
-@app.on_event("startup")
-async def startup():
-    """
-    The startup function is called when the application starts up.
-    It can be used to initialize resources, such as database connections.
-
-
-    :return: A coroutine, so we need to run it:
-    :doc-author: Trelent
-    """
-    r = await Redis(
-        host=settings.redis_host,
-        port=settings.redis_port,
-        db=0,
-    )
-    await FastAPILimiter.init(r)
-
-
-app.mount("/static", StaticFiles(directory="static"), name="static")
-app.mount("/templates", StaticFiles(directory="templates"), name="templates")
+BASE_DIR = Path(__file__).parent
+app.mount("/static", StaticFiles(directory=BASE_DIR / "static"), name="static")
+app.mount("/templates", StaticFiles(directory=BASE_DIR / "templates"), name="templates")
 templates = Jinja2Templates(directory="templates")
 
 
@@ -53,32 +36,32 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-ALLOWED_IPS = [
-    ip_address("192.168.1.0"),
-    ip_address("192.168.2.0"),
-    ip_address("127.0.0.1"),
-]
+# ALLOWED_IPS = [
+#     ip_address("192.168.1.0"),
+#     ip_address("192.168.2.0"),
+#     ip_address("127.0.0.1"),
+# ]
 
 
-@app.middleware("http")
-async def limit_access_by_ip(request: Request, call_next: Callable):
-    """
-    The limit_access_by_ip function is a middleware that limits access to the API by IP address.
-    It checks if the client's IP address is in ALLOWED_IPS, and if not, it returns an error message.
+# @app.middleware("http")
+# async def limit_access_by_ip(request: Request, call_next: Callable):
+#     """
+#     The limit_access_by_ip function is a middleware that limits access to the API by IP address.
+#     It checks if the client's IP address is in ALLOWED_IPS, and if not, it returns an error message.
 
-    :param request: Request: Get the client's ip address
-    :param call_next: Callable: Pass the next function in the pipeline
-    :return: A jsonresponse object with a status code of 403 and a detail message
-    :doc-author: Trelent
-    """
-    ip = ip_address(request.client.host)
-    if ip not in ALLOWED_IPS:
-        return JSONResponse(
-            status_code=status.HTTP_403_FORBIDDEN,
-            content={"detail": "Not allowed IP address"},
-        )
-    response = await call_next(request)
-    return response
+#     :param request: Request: Get the client's ip address
+#     :param call_next: Callable: Pass the next function in the pipeline
+#     :return: A jsonresponse object with a status code of 403 and a detail message
+#     :doc-author: Trelent
+#     """
+#     ip = ip_address(request.client.host)
+#     if ip not in ALLOWED_IPS:
+#         return JSONResponse(
+#             status_code=status.HTTP_403_FORBIDDEN,
+#             content={"detail": "Not allowed IP address"},
+#         )
+#     response = await call_next(request)
+#     return response
 
 
 @app.middleware("http")
@@ -100,11 +83,28 @@ async def add_process_time_header(request: Request, call_next):
     return response
 
 
+@app.on_event("startup")
+async def startup():
+    """
+    The startup function is called when the application starts up.
+    It can be used to initialize resources, such as database connections.
+
+    :return: A coroutine, so we need to run it:
+    :doc-author: Trelent
+    """
+    r = await redis.Redis(
+        host=settings.redis_host,
+        port=settings.redis_port,
+        db=0,
+    )
+    await FastAPILimiter.init(r)
+
+
 @app.get(
     "/",
     response_class=HTMLResponse,
     description="Main Page",
-    dependencies=[Depends(RateLimiter(times=2, seconds=10))],
+    # dependencies=[Depends(RateLimiter(times=2, seconds=10))],
 )
 def read_root(request: Request):
     """
@@ -139,7 +139,7 @@ def read_root(request: Request):
     "/signup.html",
     response_class=HTMLResponse,
     description="Sign Up",
-    dependencies=[Depends(RateLimiter(times=2, seconds=10))],
+    # dependencies=[Depends(RateLimiter(times=2, seconds=10))],
 )
 async def signup(request: Request):
     """
